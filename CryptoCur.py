@@ -39,7 +39,7 @@ def exchange():
                 mb.showerror('Ошибка', f'Курс для валюты {c_code.upper()} не найден!')
                 return
 
-            exchange_rate = data[cc_code][c_code]
+            exchange_rate = data[cc_code][c_code] # получаем значение обменного курса из словаря
             cc_name = crp[cc_code.capitalize()]
             c_name = cur[c_code.upper()]
 
