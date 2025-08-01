@@ -4,16 +4,17 @@ from tkinter import *
 from tkinter import messagebox as mb
 
 
-def update_cc_label(event):
-    code = cc_combobox.get()
-    name = crp[code]
-    cc_label.config(text=name)
-
-
-def update_c_label(event):
-    code = c_combobox.get()
-    name = cur[code]
-    c_label.config(text=name)
+def update(event):
+    '''Получаем значение криптовалюты и валюты из словаря и обновляем метки.
+    Кнопка "Получить курс обмена криптовалюты" разблокируется при выборе значений криптовалюты и валюты.'''
+    cc_code = cc_combobox.get()
+    c_code = c_combobox.get()
+    if cc_code and c_code:
+        cc_label.config(text=crp[cc_code])
+        c_label.config(text=cur[c_code])
+        button['state'] = 'normal'
+    else:
+        button['state'] = 'disabled'
 
 
 def exchange():
@@ -23,8 +24,8 @@ def exchange():
         try:
             response = requests.get(
                 f'https://api.coingecko.com/api/v3/simple/price?ids={cc_code}&vs_currencies={c_code}')
-            response.raise_for_status()
-            data = response.json()
+            response.raise_for_status()  # проверка успешности HTTP-статуса ответа сервера
+            data = response.json()  # преобразование JSON в словарь
             if c_code in data[cc_code]:
                 exchange_rate = data[cc_code][c_code]
                 cc_name = crp[cc_code.capitalize()]
@@ -38,16 +39,18 @@ def exchange():
         mb.showwarning('Внимание!', 'Выберите коды для криптовалюты и валюты!')
 
 
+# Словарь кодов криптовалют и их полных названий
 crp = {'Bitcoin': 'Биткоин',
        'Ethereum': 'Эфириум',
        'Litecoin': 'Лайткоин',
        'Solana': 'Солана',
        'Tether': 'Тизер'
        }
-
+# Словарь кодов валют и их полных названий
 cur = {'RUB': 'Российский рубль',
        'USD': 'Американский доллар'}
 
+# Создание графического интерфейса
 window = Tk()
 window.title('Курс обмена криптовалют')
 window.geometry('360x300')
@@ -56,7 +59,7 @@ Label(text='Криптовалюта').pack(padx=10, pady=10)
 cc_combobox = ttk.Combobox(values=list(crp.keys()))
 cc_combobox.pack(padx=10, pady=10)
 cc_combobox['state'] = 'readonly'  # Блокировка ввода (только выбор из списка)
-cc_combobox.bind('<<ComboboxSelected>>', update_cc_label)
+cc_combobox.bind('<<ComboboxSelected>>', update)
 
 cc_label = ttk.Label()
 cc_label.pack(padx=10, pady=10)
@@ -65,11 +68,13 @@ Label(text='Целевая валюта').pack(padx=10, pady=10)
 c_combobox = ttk.Combobox(values=list(cur.keys()))
 c_combobox.pack(padx=10, pady=10)
 c_combobox['state'] = 'readonly'  # Блокировка ввода (только выбор из списка)
-c_combobox.bind('<<ComboboxSelected>>', update_c_label)
+c_combobox.bind('<<ComboboxSelected>>', update)
 
 c_label = ttk.Label()
 c_label.pack(padx=10, pady=10)
 
-Button(text='Получить курс обмена криптовалюты', command=exchange).pack(padx=10, pady=10)
+button = Button(text='Получить курс обмена криптовалюты', state='disabled', command=exchange)
+button.pack(padx=10, pady=10)
+window.bind('<Return>', lambda event: button.invoke())  # Привязываем нажатие Enter к кнопке
 
 window.mainloop()
