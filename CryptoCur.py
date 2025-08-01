@@ -15,7 +15,7 @@ def update(event):
         c_label.config(text=cur[c_code])
         # Разблокировка кнопки
         button['state'] = 'normal'
-        # Даем фокус кнопке для удобства нажатия Enter
+        # Установка фокуса на кнопке, для удобства нажатия Enter
         button.focus_set()
     else:
         button['state'] = 'disabled'
@@ -84,11 +84,11 @@ cur = {
 window = Tk()
 window.title('Курс обмена криптовалют')
 center_window(window, 400, 300)  # Центрируем окно
-window.resizable(False, False)
+window.resizable(False, False)  # Запрет изменения размеров окна пользователем
 
 # Криптовалюта
 Label(text='Выберите криптовалюту', font=('Arial', 10, 'bold')).pack(padx=10, pady=5)
-cc_combobox = ttk.Combobox(values=list(crp.keys()), state='readonly')
+cc_combobox = ttk.Combobox(values=list(crp.keys()), state='readonly')  # Комбобокс с запретом ручного ввода текста
 cc_combobox.pack(pady=5)
 cc_combobox.bind('<<ComboboxSelected>>', update)
 
@@ -97,7 +97,7 @@ cc_label.pack(pady=5)
 
 # Валюта
 Label(text='Выберите валюту', font=('Arial', 10, 'bold')).pack(padx=10, pady=5)
-c_combobox = ttk.Combobox(values=list(cur.keys()), state='readonly')
+c_combobox = ttk.Combobox(values=list(cur.keys()), state='readonly')  # Комбобокс с запретом ручного ввода текста
 c_combobox.pack(pady=5)
 c_combobox.bind('<<ComboboxSelected>>', update)
 
